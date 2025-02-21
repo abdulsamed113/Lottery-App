@@ -92,6 +92,39 @@ make createSubscription ARGS="--network sepolia"
 
 ---
 
+## New Commands
+### Call a Contract Function (Read-Only)
+Use `make call` to read data from the contract without spending gas:
+```bash
+make call FUNCTION="getEntranceFee()"
+```
+
+### Send a Transaction (State-Changing)
+Use `make send` to execute a function that modifies the blockchain state:
+```bash
+make send FUNCTION="enterRaffle()" VALUE=10000000000000000
+```
+
+### Read Contract Storage
+Use `make storage` to read a specific storage slot:
+```bash
+make storage SLOT=0
+```
+
+### Monitor Contract Events
+Use `make logs` to listen for contract events:
+```bash
+make logs
+```
+
+### Check Wallet Balance
+Use `make balance` to check the balance of your wallet:
+```bash
+make balance
+```
+
+---
+
 ## Estimate Gas
 To estimate gas costs:
 ```bash
@@ -129,5 +162,3 @@ Yes, `chainlink-brownie-contracts` is an official repository maintained by the C
 
 ### Deployed on ETH SepoliaScan
 [View on Etherscan](https://sepolia.etherscan.io/address/0xbf9f7b16ece875a4b3a311f2c2033de33e91ad27)
-
-
