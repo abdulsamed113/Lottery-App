@@ -161,4 +161,4 @@ Yes, `chainlink-brownie-contracts` is an official repository maintained by the C
 ---
 
 ### Deployed on ETH SepoliaScan
-[View on Etherscan](https://sepolia.etherscan.io/address/0xbf9f7b16ece875a4b3a311f2c2033de33e91ad27)
+[View on Etherscan](https://sepolia.etherscan.io/address/0xEEd8FAC1680Def8C5E87583Ea9A6a429B384EA63)
