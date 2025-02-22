@@ -3,7 +3,7 @@ ifneq (,$(wildcard .env))
     export
 endif
 
-.PHONY: all test clean deploy fund help install snapshot format anvil call send storage logs balance
+.PHONY: all test clean deploy fund help install snapshot format anvil call send storage logs balance debug trace create-wallet estimate-gas flatten inspect verify publish create-snapshot revert-snapshot gas-report build-info
 
 help:
 	@echo "Usage:"
@@ -66,3 +66,50 @@ balance:
 	@if [ -z "$(WALLET_ADDRESS)" ]; then echo "❌ ERROR: WALLET_ADDRESS is not set!"; exit 1; fi
 	@if [ -z "$(SEPOLIA_RPC_URL)" ]; then echo "❌ ERROR: SEPOLIA_RPC_URL is not set!"; exit 1; fi
 	@cast balance $(WALLET_ADDRESS) --rpc-url $(SEPOLIA_RPC_URL)
+
+debug:
+	@if [ -z "$(CONTRACT_ADDRESS)" ]; then echo "❌ ERROR: CONTRACT_ADDRESS is not set!"; exit 1; fi
+	@if [ -z "$(SEPOLIA_RPC_URL)" ]; then echo "❌ ERROR: SEPOLIA_RPC_URL is not set!"; exit 1; fi
+	@forge debug $(CONTRACT_ADDRESS) --rpc-url $(SEPOLIA_RPC_URL)
+
+trace:
+	@if [ -z "$(TX_HASH)" ]; then echo "❌ ERROR: TX_HASH is not set!"; exit 1; fi
+	@if [ -z "$(SEPOLIA_RPC_URL)" ]; then echo "❌ ERROR: SEPOLIA_RPC_URL is not set!"; exit 1; fi
+	@cast trace $(TX_HASH) --rpc-url $(SEPOLIA_RPC_URL)
+
+create-wallet:
+	@forge create-wallet
+
+estimate-gas:
+	@if [ -z "$(CONTRACT_ADDRESS)" ]; then echo "❌ ERROR: CONTRACT_ADDRESS is not set!"; exit 1; fi
+	@if [ -z "$(FUNCTION)" ]; then echo "❌ ERROR: FUNCTION is not set!"; exit 1; fi
+	@if [ -z "$(SEPOLIA_RPC_URL)" ]; then echo "❌ ERROR: SEPOLIA_RPC_URL is not set!"; exit 1; fi
+	@cast estimate $(CONTRACT_ADDRESS) "$(FUNCTION)" --rpc-url $(SEPOLIA_RPC_URL)
+
+flatten:
+	@forge flatten
+
+inspect:
+	@if [ -z "$(CONTRACT_ADDRESS)" ]; then echo "❌ ERROR: CONTRACT_ADDRESS is not set!"; exit 1; fi
+	@forge inspect $(CONTRACT_ADDRESS)
+
+verify:
+	@if [ -z "$(CONTRACT_ADDRESS)" ]; then echo "❌ ERROR: CONTRACT_ADDRESS is not set!"; exit 1; fi
+	@if [ -z "$(ETHERSCAN_API_KEY)" ]; then echo "❌ ERROR: ETHERSCAN_API_KEY is not set!"; exit 1; fi
+	@forge verify-contract $(CONTRACT_ADDRESS) --etherscan-api-key $(ETHERSCAN_API_KEY)
+
+publish:
+	@forge publish
+
+create-snapshot:
+	@forge snapshot create
+
+revert-snapshot:
+	@if [ -z "$(SNAPSHOT_ID)" ]; then echo "❌ ERROR: SNAPSHOT_ID is not set!"; exit 1; fi
+	@forge snapshot revert $(SNAPSHOT_ID)
+
+gas-report:
+	@forge test --gas-report
+
+build-info:
+	@forge build-info
