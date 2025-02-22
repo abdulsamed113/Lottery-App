@@ -37,21 +37,24 @@ anvil :; anvil -m 'test test test test test test test test test test test junk' 
 
 NETWORK_ARGS := --rpc-url $(SEPOLIA_RPC_URL) --keystore $(KEYSTORE_PASSWORD) --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
 
+
+     #Transaction (deploy, send to set data ) needs to be signed with the private key of the wallet.
 deploy:
 	@forge script script/DeployRaffle.s.sol:DeployRaffle $(NETWORK_ARGS)
+
+
+
+send:
+	@if [ -z "$(CONTRACT_ADDRESS)" ]; then echo "❌ ERROR: CONTRACT_ADDRESS is not set!"; exit 1; fi
+	@if [ -z "$(KEYSTORE_PASSWORD)" ]; then echo "❌ ERROR: KEYSTORE_PASSWORD is not set!"; exit 1; fi
+	@if [ -z "$(SEPOLIA_RPC_URL)" ]; then echo "❌ ERROR: SEPOLIA_RPC_URL is not set!"; exit 1; fi
+	@cast send $(CONTRACT_ADDRESS) "$(FUNCTION)" --keystore $(KEYSTORE_PASSWORD) --rpc-url $(SEPOLIA_RPC_URL) --value $(VALUE)
+
 
 call:
 	@if [ -z "$(CONTRACT_ADDRESS)" ]; then echo "❌ ERROR: CONTRACT_ADDRESS is not set!"; exit 1; fi
 	@if [ -z "$(SEPOLIA_RPC_URL)" ]; then echo "❌ ERROR: SEPOLIA_RPC_URL is not set!"; exit 1; fi
 	@cast call $(CONTRACT_ADDRESS) "$(FUNCTION)" --rpc-url $(SEPOLIA_RPC_URL)
-
-send:
-	@if [ -z "$(CONTRACT_ADDRESS)" ]; then echo "❌ ERROR: CONTRACT_ADDRESS is not set!"; exit 1; fi
-	@if [ -z "$(KEYSTORE_PASSWORD)" ]; then echo "❌ ERROR: KEY_STORE is not set!"; exit 1; fi
-	@if [ -z "$(KEYSTORE_PASSWORD)" ]; then echo "❌ ERROR: KEYSTORE_PASSWORD is not set!"; exit 1; fi
-	@if [ -z "$(SEPOLIA_RPC_URL)" ]; then echo "❌ ERROR: SEPOLIA_RPC_URL is not set!"; exit 1; fi
-	@cast send $(CONTRACT_ADDRESS) "$(FUNCTION)" --keystore $(KEYSTORE_PASSWORD) --rpc-url $(SEPOLIA_RPC_URL) --value $(VALUE)
-
 storage:
 	@if [ -z "$(CONTRACT_ADDRESS)" ]; then echo "❌ ERROR: CONTRACT_ADDRESS is not set!"; exit 1; fi
 	@if [ -z "$(SEPOLIA_RPC_URL)" ]; then echo "❌ ERROR: SEPOLIA_RPC_URL is not set!"; exit 1; fi
