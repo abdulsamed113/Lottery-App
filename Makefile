@@ -35,7 +35,7 @@ format :; forge fmt
 
 anvil :; anvil -m 'test test test test test test test test test test test junk' --steps-tracing --block-time 1
 
-NETWORK_ARGS := --rpc-url $(SEPOLIA_RPC_URL) --keystore $(KEY_STORE) --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
+NETWORK_ARGS := --rpc-url $(SEPOLIA_RPC_URL) --keystore $(KEYSTORE_PASSWORD) --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
 
 deploy:
 	@forge script script/DeployRaffle.s.sol:DeployRaffle $(NETWORK_ARGS)
@@ -47,10 +47,10 @@ call:
 
 send:
 	@if [ -z "$(CONTRACT_ADDRESS)" ]; then echo "❌ ERROR: CONTRACT_ADDRESS is not set!"; exit 1; fi
-	@if [ -z "$(KEY_STORE)" ]; then echo "❌ ERROR: KEY_STORE is not set!"; exit 1; fi
-	@if [ -z "$(KEY_STORE)" ]; then echo "❌ ERROR: KEYSTORE_PASSWORD is not set!"; exit 1; fi
+	@if [ -z "$(KEYSTORE_PASSWORD)" ]; then echo "❌ ERROR: KEY_STORE is not set!"; exit 1; fi
+	@if [ -z "$(KEYSTORE_PASSWORD)" ]; then echo "❌ ERROR: KEYSTORE_PASSWORD is not set!"; exit 1; fi
 	@if [ -z "$(SEPOLIA_RPC_URL)" ]; then echo "❌ ERROR: SEPOLIA_RPC_URL is not set!"; exit 1; fi
-	@cast send $(CONTRACT_ADDRESS) "$(FUNCTION)" --keystore $(KEY_STORE) --password $(KEY_STORE) --rpc-url $(SEPOLIA_RPC_URL) --value $(VALUE)
+	@cast send $(CONTRACT_ADDRESS) "$(FUNCTION)" --keystore $(KEYSTORE_PASSWORD) --rpc-url $(SEPOLIA_RPC_URL) --value $(VALUE)
 
 storage:
 	@if [ -z "$(CONTRACT_ADDRESS)" ]; then echo "❌ ERROR: CONTRACT_ADDRESS is not set!"; exit 1; fi
