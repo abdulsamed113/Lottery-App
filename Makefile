@@ -1,19 +1,14 @@
-<<<<<<< HEAD
 # -*- makefile -*-
 # Makefile for Foundry Project - Professional Edition
 
 # --------------------------
 # Environment Configuration
 # --------------------------
-=======
-fix:  
->>>>>>> 58fccf3 (Remove invalid submodules)
 ifneq (,$(wildcard .env))
 include .env
 export
 endif
 
-<<<<<<< HEAD
 # --------------------------
 # Phony Targets Declaration
 # --------------------------
@@ -36,19 +31,6 @@ endif
 DEFAULT_ANVIL_MNEMONIC = "test test test test test test test test test test test junk"
 DEFAULT_FORK_URL = {SEPOLIA_RPC_URL}
 CONTRACT ?= $(if $(CONTRACT_NAME),src/${CONTRACT_NAME}.sol:${CONTRACT_NAME},)
-=======
-.PHONY: all test clean deploy fund help install snapshot format anvil call send storage logs balance debug trace create-wallet estimate-gas flatten inspect verify publish create-snapshot revert-snapshot gas-report build-info fork fork-test coverage fuzz-test
-
-help:
-	@echo "Usage:"
-	@echo " make deploy [ARGS=...]\n example: make deploy ARGS=\"--network sepolia\""
-	@echo ""
-	@echo " make call FUNCTION=\"getEntranceFee()\""
-	@echo " make send FUNCTION=\"enterRaffle()\" VALUE=10000000000000000"
-	@echo " make storage SLOT=0"
-	@echo " make logs"
-	@echo " make balance"
->>>>>>> 58fccf3 (Remove invalid submodules)
 
 # --------------------------
 # Main Targets
@@ -60,16 +42,15 @@ help:  ## Display comprehensive help menu
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / \
 		{printf "\033[1;32m%-25s\033[0m%s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-<<<<<<< HEAD
 init: clean install update  ## Initialize project (clean, install, update)
+	@rm -rf .gitmodules .git/modules/* lib node_modules
 
 # --------------------------
 # Project Setup
 # --------------------------
 clean:  ## Clean build artifacts and dependencies
 	@forge clean
-	@rm -rf .gitmodules .git/modules/* lib
-
+	
 install:  ## Install project dependencies
 	@forge install \
 		cyfrin/foundry-devops@0.2.2 \
@@ -421,154 +402,3 @@ disassemble: check-contract  ## Disassemble contract bytecode
 	@cast disassemble ${CONTRACT_ADDRESS} \
 		--rpc-url ${SEPOLIA_RPC_URL} \
 		--full
-=======
-clean:
-	@forge clean
-
-remove:
-	@rm -rf .gitmodules && rm -rf .git/modules/* && rm -rf lib && touch .gitmodules && git add . && git commit -m "Cleanup modules"
-
-install:
-	@forge install cyfrin/foundry-devops@0.2.2 --no-commit
-	@forge install smartcontractkit/chainlink-brownie-contracts@1.1.1 --no-commit
-	@forge install foundry-rs/forge-std@v1.8.2 --no-commit
-	@forge install transmissions11/solmate@v6 --no-commit
-
-update:
-	@forge update
-
-build:
-	@forge build
-
-# ================================
-# Testing and Coverage
-# ================================
-
-test:
-	@forge test
-
-coverage:
-	@forge coverage
-
-fuzz-test:
-	@forge test --fuzz-runs 265
-
-# ================================
-# Deployment and Interaction
-# ================================
-
-NETWORK_ARGS := --rpc-url $(SEPOLIA_RPC_URL) --keystore $(KEYSTORE_PASSWORD) --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
-
-deploy:
-	@forge script script/DeployRaffle.s.sol:DeployRaffle $(NETWORK_ARGS)
-
-send:
-	@if [ -z "$(CONTRACT_ADDRESS)" ]; then echo "❌ ERROR: CONTRACT_ADDRESS is not set!"; exit 1; fi
-	@if [ -z "$(KEYSTORE_PASSWORD)" ]; then echo "❌ ERROR: KEYSTORE_PASSWORD is not set!"; exit 1; fi
-	@if [ -z "$(SEPOLIA_RPC_URL)" ]; then echo "❌ ERROR: SEPOLIA_RPC_URL is not set!"; exit 1; fi
-	@cast send $(CONTRACT_ADDRESS) "$(FUNCTION)" --keystore $(KEYSTORE_PASSWORD) --rpc-url $(SEPOLIA_RPC_URL) --value $(VALUE)
-
-call:
-	@if [ -z "$(CONTRACT_ADDRESS)" ]; then echo "❌ ERROR: CONTRACT_ADDRESS is not set!"; exit 1; fi
-	@if [ -z "$(SEPOLIA_RPC_URL)" ]; then echo "❌ ERROR: SEPOLIA_RPC_URL is not set!"; exit 1; fi
-	@cast call $(CONTRACT_ADDRESS) "$(FUNCTION)" --rpc-url $(SEPOLIA_RPC_URL)
-
-logs:
-	@if [ -z "$(CONTRACT_ADDRESS)" ]; then echo "❌ ERROR: CONTRACT_ADDRESS is not set!"; exit 1; fi
-	@if [ -z "$(SEPOLIA_RPC_URL)" ]; then echo "❌ ERROR: SEPOLIA_RPC_URL is not set!"; exit 1; fi
-	@cast logs --from-block latest --address $(CONTRACT_ADDRESS) --rpc-url $(SEPOLIA_RPC_URL)
-
-balance:
-	@if [ -z "$(WALLET_ADDRESS)" ]; then echo "❌ ERROR: WALLET_ADDRESS is not set!"; exit 1; fi
-	@if [ -z "$(SEPOLIA_RPC_URL)" ]; then echo "❌ ERROR: SEPOLIA_RPC_URL is not set!"; exit 1; fi
-	@cast balance $(WALLET_ADDRESS) --rpc-url $(SEPOLIA_RPC_URL)
-
-# ================================
-# Debugging and Inspection
-# ================================
-
-debug:
-	@if [ -z "$(CONTRACT_ADDRESS)" ]; then echo "❌ ERROR: CONTRACT_ADDRESS is not set!"; exit 1; fi
-	@if [ -z "$(SEPOLIA_RPC_URL)" ]; then echo "❌ ERROR: SEPOLIA_RPC_URL is not set!"; exit 1; fi
-	@forge debug $(CONTRACT_ADDRESS) --rpc-url $(SEPOLIA_RPC_URL)
-
-trace:
-	@if [ -z "$(TX_HASH)" ]; then echo "❌ ERROR: TX_HASH is not set!"; exit 1; fi
-	@if [ -z "$(SEPOLIA_RPC_URL)" ]; then echo "❌ ERROR: SEPOLIA_RPC_URL is not set!"; exit 1; fi
-	@cast trace $(TX_HASH) --rpc-url $(SEPOLIA_RPC_URL)
-
-inspect:
-	@if [ -z "$(CONTRACT_ADDRESS)" ]; then echo "❌ ERROR: CONTRACT_ADDRESS is not set!"; exit 1; fi
-	@forge inspect $(CONTRACT_ADDRESS)
-
-# ================================
-# Wallet and Gas Utilities
-# ================================
-
-create-wallet:
-	@forge create-wallet
-
-estimate-gas:
-	@if [ -z "$(CONTRACT_ADDRESS)" ]; then echo "❌ ERROR: CONTRACT_ADDRESS is not set!"; exit 1; fi
-	@if [ -z "$(FUNCTION)" ]; then echo "❌ ERROR: FUNCTION is not set!"; exit 1; fi
-	@if [ -z "$(SEPOLIA_RPC_URL)" ]; then echo "❌ ERROR: SEPOLIA_RPC_URL is not set!"; exit 1; fi
-	@cast estimate $(CONTRACT_ADDRESS) "$(FUNCTION)" --rpc-url $(SEPOLIA_RPC_URL)
-
-# ================================
-# Contract Flattening and Verification
-# ================================
-
-flatten:
-	@forge flatten
-
-verify:
-	@if [ -z "$(CONTRACT_ADDRESS)" ]; then echo "❌ ERROR: CONTRACT_ADDRESS is not set!"; exit 1; fi
-	@if [ -z "$(ETHERSCAN_API_KEY)" ]; then echo "❌ ERROR: ETHERSCAN_API_KEY is not set!"; exit 1; fi
-	@forge verify-contract $(CONTRACT_ADDRESS) --etherscan-api-key $(ETHERSCAN_API_KEY)
-
-publish:
-	@forge publish
-
-# ================================
-# Snapshots
-# ================================
-
-create-snapshot:
-	@forge snapshot create
-
-revert-snapshot:
-	@if [ -z "$(SNAPSHOT_ID)" ]; then echo "❌ ERROR: SNAPSHOT_ID is not set!"; exit 1; fi
-	@forge snapshot revert $(SNAPSHOT_ID)
-
-# ================================
-# Gas Reporting and Build Info
-# ================================
-
-gas-report:
-	@forge test --gas-report
-
-build-info:
-	@forge build-info
-
-# ================================
-# Forking Mainnet for Local Testing
-# ================================
-
-fork:
-	@if [ -z "$(MAINNET_RPC_URL)" ]; then echo "❌ ERROR: MAINNET_RPC_URL is not set!"; exit 1; fi
-	@anvil --fork-url $(MAINNET_RPC_URL) --block-time 1
-
-fork-test:
-	@if [ -z "$(MAINNET_RPC_URL)" ]; then echo "❌ ERROR: MAINNET_RPC_URL is not set!"; exit 1; fi
-	@forge test --fork-url $(MAINNET_RPC_URL)
-
-# ================================
-# Formatting and Local Anvil Node
-# ================================
-
-format:
-	@forge fmt
-
-anvil:
-	@anvil -m 'test test test test test test test test test test test junk' --steps-tracing --block-time 1
->>>>>>> 58fccf3 (Remove invalid submodules)
